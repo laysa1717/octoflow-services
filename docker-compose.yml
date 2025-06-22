@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   web:
@@ -9,23 +9,27 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    env_file:
-      - .env
     depends_on:
       - db
       - redis
+      - rabbitmq
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/octoflow
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
 
   db:
     image: postgres:15
     container_name: octoflow_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+    restart: always
     environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: octoflow
-      POSTGRES_USER: octoflow
-      POSTGRES_PASSWORD: octoflow
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7
@@ -33,5 +37,18 @@ services:
     ports:
       - "6379:6379"
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: octoflow_rabbitmq
+    ports:
+      - "5672:5672"    
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   postgres_data:
+  rabbitmq_data:

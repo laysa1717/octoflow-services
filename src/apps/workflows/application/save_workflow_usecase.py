@@ -14,8 +14,6 @@ class CreateWorkflowUseCase:
             name=payload.get('name'),
             description=payload.get('description'),
             status=payload.get('status'),
-            trigger_type= payload.get('trigger_type'),
-            trigger_config = payload.get('trigger_config'),
             created_at=datetime.now(),
             updated_at=datetime.now(),
         )

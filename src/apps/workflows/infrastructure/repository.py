@@ -15,8 +15,6 @@ class WorkflowRepository:
                 name=w.name,
                 description=w.description,
                 status=w.status,
-                trigger_type=w.trigger_type,
-                trigger_config=w.trigger_config,
                 created_at=w.created_at,
                 updated_at=w.updated_at
             )
@@ -31,8 +29,6 @@ class WorkflowRepository:
             name=workflow_entity.name,
             description=workflow_entity.description,
             status=workflow_entity.status,
-            trigger_type= workflow_entity.trigger_type,
-            trigger_config= workflow_entity.trigger_config
         )
         workflow_model.save()
 
@@ -49,8 +45,6 @@ class WorkflowRepository:
             name=workflow.name,
             description=workflow.description,
             status=workflow.status,
-            trigger_type=workflow.trigger_type,
-            trigger_config=workflow.trigger_config,
             created_at=workflow.created_at,
             updated_at=workflow.updated_at
         )

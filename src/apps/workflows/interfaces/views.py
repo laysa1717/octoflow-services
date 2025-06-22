@@ -51,10 +51,8 @@ class WorkflowCreateView(View):
         name = payload.get('name')
         description = payload.get('description')
         status = payload.get('status')
-        trigger_type = payload.get('trigger_type')
-        trigger_config = payload.get('trigger_config')
-
-        if not all([name, description, status, trigger_type, trigger_config]):
+        
+        if not all([name, description, status]):
             return JsonResponse(
                 {'message': 'Campos obrigatórios: name, description e status.'},
                 status=400
