@@ -1,9 +1,9 @@
 from ..infrastructure.repository import WorkflowRepository
 
 
-class ListWorkflowsUseCase:
+class GetWorkflowByNameUseCase:
     def __init__(self):
         self.repository = WorkflowRepository()
 
-    def execute(self):
-        return self.repository.list_workflows()
+    def execute(self, name):
+        return self.repository.get_workflow_by_name(name)

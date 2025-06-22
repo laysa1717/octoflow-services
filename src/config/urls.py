@@ -16,5 +16,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/health/', health_check),
     path('api/workflows/', include('apps.workflows.interfaces.urls')),
-    path('api/workflows/save', include('apps.workflows.interfaces.urls'))
 ]

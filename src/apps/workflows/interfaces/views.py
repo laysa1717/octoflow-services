@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from django.views import View
 from ..application.list_workflows_usecase import ListWorkflowsUseCase
 from ..application.save_workflow_usecase import CreateWorkflowUseCase
+from ..application.update_workflow_usecase import UpdateWorkflowUseCase
+from ..application.get_workflow_by_name_usecase import GetWorkflowByNameUseCase
 import json
 
 
@@ -70,4 +72,61 @@ class WorkflowCreateView(View):
                 status=422
             )        
 
-       
+class WorkflowGetByNameView(View):
+    def get(self, request):
+        name = request.GET.get('nameWorkflow')
+
+        if not name:
+            return JsonResponse(
+                {'message': 'O parâmetro nameWorkflow é obrigatório.'},
+                status=400
+            )
+
+        usecase = GetWorkflowByNameUseCase()
+        workflow = usecase.execute(name)
+
+        if workflow is None:
+            return JsonResponse(
+                {'message': f'Workflow com nome {name} não encontrado.'},
+                status=404
+            )
+
+        data = {
+            "id": str(workflow.id),
+            "name": workflow.name,
+            "description": workflow.description,
+            "status": workflow.status,
+            "created_at": workflow.created_at.isoformat(),
+            "updated_at": workflow.updated_at.isoformat(),
+        }
+
+        return JsonResponse(data, status=200)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class WorkflowUpdateView(View):
+    def put(self, request):
+        try:
+            payload = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'message': 'Payload inválido. Envie um JSON válido.'}, status=400)
+
+        workflow_name = payload.get('nameWorkflow')
+        new_status = payload.get('new_status')
+
+        if not workflow_name or not new_status:
+            return JsonResponse(
+                {'message': 'Campos obrigatórios: nameWorkflow e new_status.'},
+                status=400
+            )
+
+        use_case = UpdateWorkflowUseCase()
+        result = use_case.execute(workflow_name, new_status)
+
+        if result is None:
+            return JsonResponse({'message': 'Workflow não encontrado.'}, status=404)
+
+        if result is False:
+            return JsonResponse({'message': 'Erro ao atualizar workflow.'}, status=422)
+
+        return JsonResponse({'message': 'Status do workflow atualizado com sucesso.'}, status=200)
+            

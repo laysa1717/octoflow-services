@@ -15,6 +15,8 @@ class WorkflowRepository:
                 name=w.name,
                 description=w.description,
                 status=w.status,
+                trigger_type=w.trigger_type,
+                trigger_config=w.trigger_config,
                 created_at=w.created_at,
                 updated_at=w.updated_at
             )
@@ -35,3 +37,30 @@ class WorkflowRepository:
         workflow_model.save()
 
         return workflow_entity
+    
+    def get_workflow_by_name(self, name):
+        try:
+            workflow = WorkflowModel.objects.get(name=name)
+        except WorkflowModel.DoesNotExist:
+            return None
+
+        return Workflow(
+            id=workflow.id,
+            name=workflow.name,
+            description=workflow.description,
+            status=workflow.status,
+            trigger_type=workflow.trigger_type,
+            trigger_config=workflow.trigger_config,
+            created_at=workflow.created_at,
+            updated_at=workflow.updated_at
+        )
+
+    def update_workflow_status(self, workflow_id, new_status):
+        try:
+            workflow = WorkflowModel.objects.get(id=workflow_id)
+            workflow.status = new_status
+            workflow.save()
+
+            return True
+        except WorkflowModel.DoesNotExist:
+            return False
